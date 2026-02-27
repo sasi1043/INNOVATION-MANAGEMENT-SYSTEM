@@ -20,13 +20,17 @@ app.set("trust proxy", 1);
 
 // initializing session
 app.use(session({
- secret: "secret",
- resave: false,
- saveUninitialized: false,
- cookie: {
-   secure: false,   // localhost
-   sameSite: "lax"
- }
+  name: "ims.sid",
+  secret: process.env.SESSION_SECRET || "secret",
+  resave: false,
+  saveUninitialized: false,
+  proxy: true,                //  REQUIRED FOR RENDER
+  cookie: {
+    secure: true,             //  HTTPS (Render)
+    sameSite: "none",         // Cross-site cookie
+    httpOnly: true,
+    maxAge: 24 * 60 * 60 * 1000
+  }
 }));
 
 // initializing passport
