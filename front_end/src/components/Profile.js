@@ -1,49 +1,56 @@
-import axios from "axios";
-import { useEffect } from "react";
-import { useRoleContext } from "../context/RoleContext";
-import { useNavigate } from "react-router-dom";
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { useRoleContext } from '../context/RoleContext';
+import { useNavigate } from 'react-router-dom';
 
 const API = process.env.REACT_APP_BACKEND_URL;
-
-// IMPORTANT
 axios.defaults.withCredentials = true;
 
 function Profile() {
   const navigate = useNavigate();
-  const { rolefun, userfun, emailfun, setUserId } = useRoleContext();
+  const [user, setUser] = useState(null);
+  const { rolefun, userfun, emailfun, userId } = useRoleContext();
 
   useEffect(() => {
-    const loadProfile = async () => {
+    let retry = true;
+
+    const load = async () => {
       try {
         const res = await axios.get(`${API}/auth/profile`, {
           withCredentials: true,
         });
 
-        const user = res.data;
+        const data = res.data;
 
-        // save globally
-        userfun(user.name);
-        rolefun(user.role);
-        emailfun(user.email);
-        setUserId(user.id);
+        localStorage.setItem("User", JSON.stringify(data));
+        setUser(data);
 
-        // optional localStorage
-        localStorage.setItem("User", JSON.stringify(user));
+        userfun(data.name);
+        rolefun(data.role);
+        emailfun(data.email);
+        userId(data.id);
 
-        // redirect AFTER state is set
-        navigate("/home", { replace: true });
-      } catch (err) {
-        console.error("Profile fetch failed", err.response?.status);
-
-        // 🔴 very important fallback
-        navigate("/", { replace: true });
+        navigate('/home', { replace: true });
+      } catch (e) {
+        // Retry once after cookie settles
+        if (retry) {
+          retry = false;
+          setTimeout(load, 600);
+        } else {
+          console.log("Profile error:", e.response?.status);
+          navigate('/', { replace: true });
+        }
       }
     };
 
-    loadProfile();
-  }, [navigate, rolefun, userfun, emailfun, setUserId]);
+    load();
+  }, [rolefun, emailfun, userfun, navigate, userId]);
 
-  return <p>Loading...</p>;
+  if (!user) {
+    return <p>Loading...</p>;
+  }
+
+  return <p>User Login Successful</p>;
 }
 
 export default Profile;
