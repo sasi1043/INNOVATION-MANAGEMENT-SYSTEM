@@ -11,8 +11,11 @@ function Profile() {
   const [user, setUser] = useState(null);
   const { rolefun, userfun, emailfun, userId } = useRoleContext();
 
-  useEffect(() => {
-  const load = async () => {
+useEffect(() => {
+  const params = new URLSearchParams(window.location.search);
+  const loggedIn = params.get("loggedin");
+
+  const loadProfile = async () => {
     try {
       const res = await axios.get(`${API}/auth/profile`, {
         withCredentials: true,
@@ -29,13 +32,18 @@ function Profile() {
       userId(data.id);
 
       navigate("/home", { replace: true });
-    } catch (e) {
-      console.log("Retrying profile fetch...");
-      setTimeout(load, 800); // 👈 IMPORTANT delay
+    } catch (err) {
+      console.log("Waiting for session...");
+      setTimeout(loadProfile, 1000); // ⏳ WAIT FOR COOKIE
     }
   };
 
-  load();
+  // only wait if coming from google login
+  if (loggedIn) {
+    setTimeout(loadProfile, 800);
+  } else {
+    loadProfile();
+  }
 }, []);
 
   if (!user) {
