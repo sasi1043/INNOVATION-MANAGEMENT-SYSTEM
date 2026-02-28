@@ -82,7 +82,7 @@ router.get('/google',
   "/google/callback",
   passport.authenticate("google", {
     failureRedirect: `${FRONTEND_URL}/?error=invalid_user`,
-    successRedirect: `${FRONTEND_URL}/profile`,
+    successRedirect: `${FRONTEND_URL}/profile?loggedin=true`,
   })
 );
 
