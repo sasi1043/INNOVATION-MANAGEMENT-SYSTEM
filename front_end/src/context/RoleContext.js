@@ -31,15 +31,19 @@ export default function RoleProvider({ children }) {
   const emailfun = (mail) => setEmail(mail);
   const userfun = (n) => setUser(n);
   const userId = (id) =>setUser_id(id);
-  async function handlelogout() {
-    await axios.get(`${API}/auth/logout`, { withCredentials: true });
-    localStorage.removeItem("User");
-    setRole(null);
-    setEmail("");
-    setUser_id("");
-    setUser("");
-    navigate('/');
-  }
+ function handlelogout() {
+  // 1. Remove user from localStorage
+  localStorage.removeItem("User");
+
+  // 2. Clear context state
+  setRole(null);
+  setEmail("");
+  setUser("");
+  setUser_id("");
+
+  // 3. Redirect to login page
+  navigate("/", { replace: true });
+}
   return (
     <RoleContext.Provider
       value={{
