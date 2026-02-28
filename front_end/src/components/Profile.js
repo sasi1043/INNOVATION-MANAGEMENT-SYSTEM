@@ -32,7 +32,7 @@ function Profile() {
         navigate("/home", { replace: true });
       } catch (err) {
         console.error("Profile auth failed");
-        navigate("/", { replace: true });
+        navigate("/home", { replace: true });
       }
     };
 
