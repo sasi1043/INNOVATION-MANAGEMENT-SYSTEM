@@ -22,8 +22,6 @@ router.use(
   })
 );
 
-// save uninitialized is for initializing before login
-router.use(session({secret:"secret",resave:false,saveUninitialized:true}));
 
 //initializing passport:
 router.use(passport.initialize());
