@@ -9,34 +9,32 @@ function Profile() {
   const { rolefun, userfun, emailfun, userId } = useRoleContext();
 
   useEffect(() => {
-    const fetchViaBrowser = async () => {
-      try {
-        // IMPORTANT: browser-level fetch (not axios)
-        const res = await fetch(`${API}/auth/profile`, {
-          credentials: "include",
-        });
+    const params = new URLSearchParams(window.location.search);
+    const uid = params.get("uid");
 
-        if (!res.ok) throw new Error("Not authenticated");
+    if (!uid) {
+      navigate("/?error=invalid_user", { replace: true });
+      return;
+    }
 
-        const data = await res.json();
-
-        // save user
+    fetch(`${API}/user/${uid}`)
+      .then((res) => {
+        if (!res.ok) throw new Error("User not found");
+        return res.json();
+      })
+      .then((data) => {
         localStorage.setItem("User", JSON.stringify(data));
 
-        // set context
         userfun(data.name);
         rolefun(data.role);
         emailfun(data.email);
-        userId(data.id);
+        userId(data._id);
 
         navigate("/home", { replace: true });
-      } catch (err) {
-        console.error("Profile auth failed");
-        navigate("/home", { replace: true });
-      }
-    };
-
-    fetchViaBrowser();
+      })
+      .catch(() => {
+        navigate("/?error=invalid_user", { replace: true });
+      });
   }, []);
 
   return <p>Redirecting...</p>;
