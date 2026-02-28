@@ -1,56 +1,55 @@
-import axios from 'axios';
-import React, { useEffect, useState } from 'react';
-import { useRoleContext } from '../context/RoleContext';
-import { useNavigate } from 'react-router-dom';
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useRoleContext } from "../context/RoleContext";
 
 const API = process.env.REACT_APP_BACKEND_URL;
 axios.defaults.withCredentials = true;
 
 function Profile() {
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
   const { rolefun, userfun, emailfun, userId } = useRoleContext();
 
-useEffect(() => {
-  const params = new URLSearchParams(window.location.search);
-  const loggedIn = params.get("loggedin");
+  useEffect(() => {
+    let attempts = 0;
 
-  const loadProfile = async () => {
-    try {
-      const res = await axios.get(`${API}/auth/profile`, {
-        withCredentials: true,
-      });
+    const fetchProfile = async () => {
+      try {
+        const res = await axios.get(`${API}/auth/profile`);
 
-      const data = res.data;
+        const data = res.data;
 
-      localStorage.setItem("User", JSON.stringify(data));
-      setUser(data);
+        // store user
+        localStorage.setItem("User", JSON.stringify(data));
 
-      userfun(data.name);
-      rolefun(data.role);
-      emailfun(data.email);
-      userId(data.id);
+        // context updates
+        userfun(data.name);
+        rolefun(data.role);
+        emailfun(data.email);
+        userId(data.id);
 
-      navigate("/home", { replace: true });
-    } catch (err) {
-      console.log("Waiting for session...");
-      setTimeout(loadProfile, 1000); // ⏳ WAIT FOR COOKIE
-    }
-  };
+        // go home
+        navigate("/home", { replace: true });
+      } catch (err) {
+        attempts += 1;
 
-  // only wait if coming from google login
-  if (loggedIn) {
-    setTimeout(loadProfile, 800);
-  } else {
-    loadProfile();
-  }
-}, []);
+        if (attempts < 6) {
+          // wait for session cookie to settle
+          setTimeout(fetchProfile, 1000);
+        } else {
+          console.error("Profile fetch failed");
+          navigate("/", { replace: true });
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  if (!user) {
-    return <p>Loading...</p>;
-  }
+    fetchProfile();
+  }, []);
 
-  return <p>User Login Successful</p>;
+  return <p>{loading ? "Loading..." : "Redirecting..."}</p>;
 }
 
 export default Profile;
