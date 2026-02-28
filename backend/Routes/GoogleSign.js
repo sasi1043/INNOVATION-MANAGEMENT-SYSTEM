@@ -105,7 +105,10 @@ router.get("/logout", (req, res, next) => {
     }
 
     req.session.destroy(() => {
-      res.clearCookie("connect.sid"); // remove session cookie
+      res.clearCookie("ims.sid", {
+  secure: true,
+  sameSite: "none",
+}); // remove session cookie
       res.status(200).json({ message: "Logged out successfully" });
     });
   });
