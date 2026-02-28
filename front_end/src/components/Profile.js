@@ -12,39 +12,31 @@ function Profile() {
   const { rolefun, userfun, emailfun, userId } = useRoleContext();
 
   useEffect(() => {
-    let retry = true;
+  const load = async () => {
+    try {
+      const res = await axios.get(`${API}/auth/profile`, {
+        withCredentials: true,
+      });
 
-    const load = async () => {
-      try {
-        const res = await axios.get(`${API}/auth/profile`, {
-          withCredentials: true,
-        });
+      const data = res.data;
 
-        const data = res.data;
+      localStorage.setItem("User", JSON.stringify(data));
+      setUser(data);
 
-        localStorage.setItem("User", JSON.stringify(data));
-        setUser(data);
+      userfun(data.name);
+      rolefun(data.role);
+      emailfun(data.email);
+      userId(data.id);
 
-        userfun(data.name);
-        rolefun(data.role);
-        emailfun(data.email);
-        userId(data.id);
+      navigate("/home", { replace: true });
+    } catch (e) {
+      console.log("Retrying profile fetch...");
+      setTimeout(load, 800); // 👈 IMPORTANT delay
+    }
+  };
 
-        navigate('/home', { replace: true });
-      } catch (e) {
-        // Retry once after cookie settles
-        if (retry) {
-          retry = false;
-          setTimeout(load, 600);
-        } else {
-          console.log("Profile error:", e.response?.status);
-          navigate('/', { replace: true });
-        }
-      }
-    };
-
-    load();
-  }, [rolefun, emailfun, userfun, navigate, userId]);
+  load();
+}, []);
 
   if (!user) {
     return <p>Loading...</p>;
