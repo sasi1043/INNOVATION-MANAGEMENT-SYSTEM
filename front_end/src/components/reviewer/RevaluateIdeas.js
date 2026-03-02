@@ -75,7 +75,7 @@ function RevaluateIdeas({ changePage }) {
 
       {/* Count */}
       <p className="text-muted mb-3">
-        Showing <strong>{ideas.length}</strong> ideas
+        Showing <strong>{ideasFilter.length}</strong> ideas
       </p>
 
       {/* Cards */}
