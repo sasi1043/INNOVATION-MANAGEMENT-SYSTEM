@@ -62,7 +62,7 @@ function SubmitIdea() {
           formData.append("ideafile", form.ideafile);
         }
         
-        const req = await axios.post(`${API}/ideasubmission`,
+        const req = await axios.post(`${API}/ideas`,
             formData,
     );
 
