@@ -1,4 +1,3 @@
-import { render } from "@testing-library/react";
 import { createContext, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
