@@ -37,65 +37,42 @@ function SubmitIdea() {
     load()
   }, []);
 
-  async function addIdea(e) {
-    e.preventDefault()
+    async function addIdea(e) {
+      e.preventDefault()
 
-<<<<<<< HEAD
-     async function addIdea(e) {
-        e.preventDefault()
-        const formData = new FormData();
-       formData.append("Challengeid", cid);
-       formData.append("title", title);
-       formData.append("reviewer_id", reviewer_id);
-       formData.append("solution", form.solution);
-       formData.append("user_id", user_id);
-       formData.append("status", "submitted");
-       formData.append("tags", form.tags);
-       formData.append("createdByAt", new Date().toISOString());
-       formData.append("updatedAt", new Date().toISOString());
-        if (form.ideafile) {
-          formData.append("ideafile", form.ideafile);
+      if (form.ideafile) {
+        const fileSizeMB = form.ideafile.size / (1024 * 1024);
+
+        if (fileSizeMB > 10) {
+          alert("File size should not exceed 10MB");
+          return;
         }
-        
-        const req = await axios.post(`${API}/ideas`,
-            formData,
-    );
-=======
-    // 🔥 FILE SIZE VALIDATION (10MB)
-    if (form.ideafile) {
-      const fileSizeMB = form.ideafile.size / (1024 * 1024);
->>>>>>> 24dbd94 (Updated React project with new changes and bug fixes)
-
-      if (fileSizeMB > 10) {
-        alert("File size should not exceed 10MB");
-        return;
       }
+
+      const formData = new FormData();
+      formData.append("Challengeid", cid);
+      formData.append("title", title);
+      formData.append("reviewer_id", reviewer_id);
+      formData.append("solution", form.solution);
+      formData.append("user_id", user_id);
+      formData.append("status", "submitted");
+      formData.append("tags", form.tags);
+      formData.append("createdByAt", new Date().toISOString());
+      formData.append("updatedAt", new Date().toISOString());
+
+      if (form.ideafile) {
+        formData.append("ideafile", form.ideafile);
+      }
+
+      const req = await axios.post(`${API}/ideas`, formData);
+
+      alert("Idea Submitted")
+      console.log(req.data);
+
+      setForm({ Challengeid: "", solution: "", ideafile: null, tags: "" });
+      setCid("");
+      setTitle("");
     }
-
-    const formData = new FormData();
-    formData.append("Challengeid", cid);
-    formData.append("title", title);
-    formData.append("reviewer_id", reviewer_id);
-    formData.append("solution", form.solution);
-    formData.append("user_id", user_id);
-    formData.append("status", "submitted");
-    formData.append("tags", form.tags);
-    formData.append("createdByAt", new Date().toISOString());
-    formData.append("updatedAt", new Date().toISOString());
-
-    if (form.ideafile) {
-      formData.append("ideafile", form.ideafile);
-    }
-
-    const req = await axios.post(`${API}/ideas`, formData);
-
-    alert("Idea Submitted")
-    console.log(req.data);
-
-    setForm({ Challengeid: "", solution: "", ideafile: null, tags: "" });
-    setCid("");
-    setTitle("");
-  }
 
   const titleList = challenge.filter((p) => p.status === "active");
 

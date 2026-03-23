@@ -121,13 +121,8 @@ function RevaluateIdeas({ changePage }) {
 
       {/*  Count FIXED */}
       <p className="text-muted mb-3">
-<<<<<<< HEAD
-        Showing <strong>{ideasFilter.length}</strong> ideas
-=======
         Showing <strong>{filteredIdeas.length}</strong> ideas
->>>>>>> 24dbd94 (Updated React project with new changes and bug fixes)
       </p>
-
       {/* Cards */}
       <div className="row g-4">
         {filteredIdeas.length > 0 ? (
