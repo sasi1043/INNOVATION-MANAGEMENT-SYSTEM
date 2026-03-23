@@ -18,6 +18,8 @@ const API = process.env.REACT_APP_BACKEND_URL
 
 function UserManagement() {
 
+  const [searchTerm, setSearchTerm] = useState("");
+
   // react menu for edit icon
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
@@ -53,6 +55,7 @@ function UserManagement() {
          try {
         const res = await axios.get(`${API}/user`)
         setUsers(res.data);
+        setFilterUsers(res.data)
       } catch (error) {
         console.log(error.message)
       }
@@ -107,8 +110,9 @@ function UserManagement() {
         const updatedPeople=users.map((p)=>
        p._id===id? res.data : p
       )
+      setUsers(updatedPeople);
+      setFilterUsers(updatedPeople);
       load();
-      setUsers(updatedPeople)
       setEditId(null);
 
     }
@@ -121,12 +125,14 @@ function UserManagement() {
 
 
   const[users,setUsers]=useState([]);
+  const [filterUsers,setFilterUsers] = useState([]);
   
     useEffect(() => {
     const load = async () => {
       try {
         const res = await axios.get(`${API}/user`)
         setUsers(res.data);
+        setFilterUsers(res.data)
       } catch (error) {
         console.log(error.message)
       }
@@ -138,6 +144,50 @@ function UserManagement() {
   const admin = users.filter((p)=>p.role === "admin");
   const reviewer=users.filter((p)=>p.role === "reviewer");
   const activeUser = users.filter((p)=>p.isActive === true);
+  const inactive = users.filter((p)=>p.isActive === false)
+
+  function handlefilter(requirement) {
+    if(requirement === "All") {
+      setFilterUsers(users);
+    }
+    else if(requirement ==="Employee") {
+      setFilterUsers(employee);
+    }
+    else if(requirement === "admin") {
+      setFilterUsers(admin);
+    }
+    else if(requirement === "reviewer") {
+      setFilterUsers(reviewer);
+    }
+    else if(requirement === "active") {
+      setFilterUsers(activeUser)
+    }
+    else if(requirement === "inactive") {
+      setFilterUsers(inactive);
+    }
+  }
+    
+  const roleMap = {
+  user: "Employee",
+  admin: "Admin",
+  reviewer: "Reviewer"
+};
+
+useEffect(() => {
+  let temp = [...users];
+
+  //  SEARCH FILTER
+  if (searchTerm.trim() !== "") {
+    temp = temp.filter((p) =>
+      p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      p.email.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }
+
+  setFilterUsers(temp);
+
+}, [searchTerm, users]);
+
 
   return (
     <div className='bg-light vh-100'>
@@ -210,21 +260,26 @@ function UserManagement() {
           <div className='card-body shadow rounded-5'>
               <div className='row bg-light mt-5'>
              <div className='col-md-5'>
-               <input className='form-control border-0 rounded-2 m-4 bg-secondary bg-opacity-10' placeholder='Search user by name or email'></input>
+               <input
+                  className='form-control border-0 rounded-2 m-4 bg-secondary bg-opacity-10'
+                  placeholder='Search user by name or email'
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
              </div>
              <div className='col-md-3'>
-               <select className='form-select m-4'>
-                <option>All Role</option>
-                <option>Employees</option>
-                <option>Admins</option>
-                <option>Reviewer</option>
+               <select onChange={(e)=>handlefilter(e.target.value)} className='form-select m-4'>
+                <option value="All">All Role</option>
+                <option value="Employee">Employees</option>
+                <option value="admin">Admins</option>
+                <option value="reviewer">Reviewer</option>
                </select>
              </div>
              <div className='col-md-3'>
-               <select className='form-select m-4'>
-                <option>All Users</option>
-                <option>Active Users</option>
-                <option>Inactive Users</option>
+               <select onChange={(e)=>handlefilter(e.target.value)} className='form-select m-4'>
+                <option value="All">All Users</option>
+                <option value="active">Active Users</option>
+                <option value="inactive">Inactive Users</option>
                </select>
              </div>
           </div>
@@ -246,7 +301,7 @@ function UserManagement() {
              </tr>
           </thead>
           <tbody>
-             {users.map(p=>(
+             {filterUsers.map(p=>(
               <tr  key={p._id}>
                 {editId === p._id ?(
                    <>
@@ -282,7 +337,7 @@ function UserManagement() {
                   <>
                   <td className='pt-4'>{p.name}</td>
                  <td className='pt-3'>{p.email}</td>
-                 <td className='pt-3'>{p.role}</td>
+                 <td className='pt-3'><p>{roleMap[p.role] || p.role}</p></td>
                  <td className='pt-3'>{p.department}</td>
                  {p.isActive === true? (
                     <span className="badge bg-success px-3 py-2 rounded-pill mt-3">

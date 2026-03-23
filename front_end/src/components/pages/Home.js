@@ -30,6 +30,7 @@ import AIdeas from '../admin/AIdeas'
 import UserManagement from '../admin/UserManagement'
 import ViewIdeas from './ViewIdeas'
 import ViewChallenge from './ViewChallenge'
+import RChallenges from '../reviewer/RChallenges'
 
 function Home() {
 
@@ -59,7 +60,7 @@ function Home() {
         { label: "Evaluate Ideas", path: "/evaluate", icon: StarsOutlinedIcon },
         { label: "My Reviewed Ideas", path: "/assigned-ideas", icon: FactCheckOutlinedIcon },
         { label: "Approved Ideas", path: "/approved-ideas", icon: PublishedWithChangesOutlinedIcon },
-        { label: "Challenges", path: "/challengesManagement", icon: EventNoteOutlinedIcon }
+        { label: "Challenges", path: "/Rchallenges", icon: EventNoteOutlinedIcon }
 
       ],
     },
@@ -160,6 +161,7 @@ function Home() {
             {page === "/evaluate" && <RevaluateIdeas changePage={setPage} />}
             {page === "/assigned-ideas" && <RmyReviewedIdeas changePage={setPage} />}
             {page === "/verify-ideas" && <VerifyIdeas changePage={setPage} />}
+            {page === "/Rchallenges" && <RChallenges changePage={setPage} />} 
             
 
             {/* For Admin Pages */}

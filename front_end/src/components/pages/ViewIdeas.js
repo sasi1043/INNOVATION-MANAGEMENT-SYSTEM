@@ -36,9 +36,8 @@ function ViewIdeas({changePage}) {
     }, [currIdea?.submittedBy]);
 
     function handlePage(){
-        changePage('/my-ideas');
-    }
-
+    changePage(currIdea.prevPage || '/dashboard');
+}
 
   return (
     <div className="min-vh-100 bg-secondary bg-opacity-10">

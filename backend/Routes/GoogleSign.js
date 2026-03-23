@@ -61,11 +61,35 @@ router.get(
 
 router.get(
   "/google/callback",
-  passport.authenticate("google", { session: false, failureRedirect: `${FRONTEND_URL}/?error=invalid_user` }),
-  (req, res) => {
-    // SUCCESS → redirect with user ID
-    res.redirect(`${FRONTEND_URL}/profile?uid=${req.user._id}`);
-  }
+  passport.authenticate("google", {
+    failureRedirect: `${FRONTEND_URL}/?error=invalid_user`,
+    successRedirect: `${FRONTEND_URL}/profile`,
+  })
 );
 
-module.exports = router;
+router.get('/profile', (req, res) => {
+  if (!req.user) {
+    return res.status(401).json({ message: "Not authenticated" });
+  }
+  res.json({
+  id:req.user._id,
+  name: req.user.name,
+  email: req.user.email,
+  role: req.user.role
+});
+});
+
+router.get("/logout", (req, res, next) => {
+  req.logout(function (err) {
+    if (err) {
+      return next(err);
+    }
+
+    req.session.destroy(() => {
+      res.clearCookie("connect.sid"); // remove session cookie
+      res.status(200).json({ message: "Logged out successfully" });
+    });
+  });
+});
+
+  module.exports=router;

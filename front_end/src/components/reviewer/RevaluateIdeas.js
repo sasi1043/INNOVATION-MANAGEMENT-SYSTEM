@@ -3,20 +3,25 @@ import React, { useEffect, useState } from 'react'
 import { useRoleContext } from '../../context/RoleContext'
 import { useIdeaContext } from '../../context/IdeaContext'
 
-const API =process.env.REACT_APP_BACKEND_URL
+const API = process.env.REACT_APP_BACKEND_URL
 
 function RevaluateIdeas({ changePage }) {
 
   const { user_id } = useRoleContext()
   const [ideas, setIdeas] = useState([])
   const { CurrentIdea } = useIdeaContext()
-  console.log(CurrentIdea);
+
+  const [filteredIdeas, setFilteredIdeas] = useState([])
+  const [searchTerm, setSearchTerm] = useState("")
+  const [statusFilter, setStatusFilter] = useState("submitted") // default pending
+  const [sortFilter, setSortFilter] = useState("newest")
 
   useEffect(() => {
     const load = async () => {
       try {
         const res = await axios.get(`${API}/ideas/verify/${user_id}`)
         setIdeas(res.data)
+        setFilteredIdeas(res.data)
       } catch (error) {
         console.log(error.message)
       }
@@ -29,7 +34,38 @@ function RevaluateIdeas({ changePage }) {
     changePage('/verify-ideas')
   }
 
-  const ideasFilter = ideas.filter((p)=>p.status === "submitted")
+  // Combined filter logic
+  useEffect(() => {
+    let updated = [...ideas]
+
+    // Search
+    if (searchTerm.trim() !== "") {
+      updated = updated.filter((p) =>
+        p.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        p.solution?.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    }
+
+    // Status filter
+    if (statusFilter !== "All") {
+      updated = updated.filter(
+        (p) => p.status.toLowerCase() === statusFilter.toLowerCase()
+      )
+    }
+
+    // Sorting
+    if (sortFilter === "newest") {
+      updated.sort(
+        (a, b) => new Date(b.createdByAt) - new Date(a.createdByAt)
+      )
+    } else if (sortFilter === "oldest") {
+      updated.sort(
+        (a, b) => new Date(a.createdByAt) - new Date(b.createdByAt)
+      )
+    }
+
+    setFilteredIdeas(updated)
+  }, [ideas, searchTerm, statusFilter, sortFilter])
 
   return (
     <div className="container-fluid">
@@ -44,44 +80,58 @@ function RevaluateIdeas({ changePage }) {
       <div className="card shadow-sm border-0 mb-4">
         <div className="card-body">
           <div className="row g-3">
+
+            {/* Search */}
             <div className="col-md-4">
               <input
                 type="text"
                 className="form-control rounded-pill"
                 placeholder="Search ideas..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
 
+            {/* Status */}
             <div className="col-md-4">
-              <select className="form-select rounded-pill">
-                <option>All Status</option>
-                <option>Submitted</option>
-                <option>Approved</option>
-                <option>Rejected</option>
+              <select
+                className="form-select rounded-pill"
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+              >
+                <option value="submitted">Submitted</option>
               </select>
             </div>
 
+            {/* Sort */}
             <div className="col-md-4">
-              <select className="form-select rounded-pill">
-                <option>Newest First</option>
-                <option>Oldest First</option>
-                <option>Most Liked</option>
-                <option>Most Commented</option>
+              <select
+                className="form-select rounded-pill"
+                value={sortFilter}
+                onChange={(e) => setSortFilter(e.target.value)}
+              >
+                <option value="newest">Newest First</option>
+                <option value="oldest">Oldest First</option>
               </select>
             </div>
+
           </div>
         </div>
       </div>
 
-      {/* Count */}
+      {/*  Count FIXED */}
       <p className="text-muted mb-3">
+<<<<<<< HEAD
         Showing <strong>{ideasFilter.length}</strong> ideas
+=======
+        Showing <strong>{filteredIdeas.length}</strong> ideas
+>>>>>>> 24dbd94 (Updated React project with new changes and bug fixes)
       </p>
 
       {/* Cards */}
       <div className="row g-4">
-        {ideas.length > 0 ? (
-          ideasFilter.map((p) => (
+        {filteredIdeas.length > 0 ? (
+          filteredIdeas.map((p) => (
             <div className="col-xl-4 col-lg-6 col-md-6" key={p._id}>
               <div
                 className="card h-100 shadow-sm border-0"
@@ -89,7 +139,7 @@ function RevaluateIdeas({ changePage }) {
                 onClick={() => handlechangePage(p)}
               >
 
-                {/* Card Header */}
+                {/* Header */}
                 <div className="card-header bg-white border-0 d-flex justify-content-between align-items-center">
                   <h6 className="fw-semibold text-truncate mb-0">
                     {p.title}
@@ -108,16 +158,16 @@ function RevaluateIdeas({ changePage }) {
                   </span>
                 </div>
 
-                {/* Card Body */}
+                {/* Body */}
                 <div className="card-body">
                   <p className="text-muted small mb-0">
-                    {p.solution.length > 180
+                    {p.solution?.length > 180
                       ? `${p.solution.slice(0, 180)}...`
                       : p.solution}
                   </p>
                 </div>
 
-                {/* Card Footer */}
+                {/* Footer */}
                 <div className="card-footer bg-white border-0 d-flex justify-content-between align-items-center small text-muted">
                   <span>
                     📅 {new Date(p.createdByAt).toLocaleDateString()}
@@ -134,7 +184,7 @@ function RevaluateIdeas({ changePage }) {
         ) : (
           <div className="text-center text-muted mt-5">
             <h5>No ideas found</h5>
-            <p>There are no ideas pending review.</p>
+            <p>There are no ideas matching your filters.</p>
           </div>
         )}
       </div>

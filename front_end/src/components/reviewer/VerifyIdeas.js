@@ -54,7 +54,7 @@ async function handleUpdate(id ,status) {
     });
     console.log(req.data);
 
-     alert(``)
+     alert(`idea has been reviewed.`)
 
     // Reset the form after successful update
     setForm({

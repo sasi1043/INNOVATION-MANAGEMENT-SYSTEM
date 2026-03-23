@@ -36,8 +36,10 @@ function ViewChallenge({changePage}) {
     }, [currIdea?.createdBy]);
 
     function handlePage(){
-        changePage('/my-ideas');
-    }
+    changePage(currIdea.prevPage || '/dashboard');
+}
+
+  
 
 
   return (

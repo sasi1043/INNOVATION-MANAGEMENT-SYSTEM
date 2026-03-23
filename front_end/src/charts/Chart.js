@@ -24,7 +24,7 @@ function Chart({ ideas }) {
               data={data}
               dataKey="value"
               outerRadius={100}
-              label={({ name }) => name}   // 👈 This fixes it
+              label={({ name }) => name}
             >
               {data.map((entry, index) => (
                 <Cell key={index} fill={COLORS[index]} />

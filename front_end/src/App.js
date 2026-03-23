@@ -11,7 +11,7 @@ import IdeaProvider from './context/IdeaContext';
 function App() {
   return (
     <div className="App">
-      <RoleProvider>
+      <RoleProvider>  
         <IdeaProvider>
           <Routes>
             <Route path='/' element={<Login/>}></Route>

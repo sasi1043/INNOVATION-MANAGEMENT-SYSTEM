@@ -35,9 +35,17 @@ function Profile() {
       .catch(() => {
         navigate("/?error=invalid_user", { replace: true });
       });
+<<<<<<< HEAD
   }, []);
+=======
+  }, [emailfun, rolefun, userfun, userId, navigate]);
+>>>>>>> 24dbd94 (Updated React project with new changes and bug fixes)
 
   return <p>Redirecting...</p>;
 }
 
+<<<<<<< HEAD
 export default Profile;
+=======
+export default Profile;
+>>>>>>> 24dbd94 (Updated React project with new changes and bug fixes)
