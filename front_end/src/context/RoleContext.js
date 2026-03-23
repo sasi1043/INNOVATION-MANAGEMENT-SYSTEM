@@ -17,7 +17,6 @@ export default function RoleProvider({ children }) {
   const [user_id, setUser_id] = useState(initialUser._id || "");
 
   
-  console.log(render);
   const rolefun = (r) => setRole(r);
   const emailfun = (mail) => setEmail(mail);
   const userfun = (n) => setUser(n);
