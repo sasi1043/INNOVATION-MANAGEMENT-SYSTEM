@@ -12,22 +12,12 @@ function Login() {
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const err = params.get("error");
-
-<<<<<<< HEAD
-    if (err === "invalid_user") {
-      setError("Invalid user. Please contact admin.");
-    } else {
-      setError("");
-    }
-  }, [location.search]);
-=======
   if (err === "invalid_user") {
     setError("Invalid user. Please contact admin.");
   } else {
     setError("");
   }
 }, [location.search]);
->>>>>>> 24dbd94 (Updated React project with new changes and bug fixes)
 
   const handleLogin = () => {
     window.location.href = `${API}/auth/google`;
