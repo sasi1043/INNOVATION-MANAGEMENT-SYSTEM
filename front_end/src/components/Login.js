@@ -70,9 +70,4 @@ function Login() {
     </div>
   );
 }
-
-<<<<<<< HEAD
 export default Login;
-=======
-export default Login;
->>>>>>> 24dbd94 (Updated React project with new changes and bug fixes)
