@@ -1,0 +1,69 @@
+.login-div{
+  border-radius: 10%;
+  background-color: white;
+
+}
+.home-bg{
+  background: linear-gradient(
+     135deg,
+  #e0edff,
+  #e1e6ff,
+  #ebe7ff
+  );;
+}
+.divis{
+  width: 450px;
+  height: 550px;
+}
+.border-in{
+  padding: 10px;
+}
+.opacity{
+  opacity: 80%;
+}
+
+.rolelog{
+  border: 1px groove black;
+  border-radius: 10px;
+
+}
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.dashboard-menu{
+  background-color: white;
+}
+
+.dashboard-menu:hover{
+  background-color: rgb(237, 237, 237);
+}
+.dashboard-menu:focus{
+  background-color:rgb(212, 238, 247);
+  color: darkblue;
+  font-weight: bolder;
+}
+.sidebar-fixed {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 16.66%; /* col-md-2 */
+  background-color: white;
+  z-index: 1000;
+}
+.topbar-fixed {
+  position: fixed;
+  top: 0;
+  left: 16.66%; /* same as sidebar width */
+  width: calc(100% - 16.66%);
+  background-color: white;
+  z-index: 999;
+  padding-top: 12px;
+}
+.main-content {
+  margin-left: 16.66%; /* sidebar width */
+  margin-top: 80px;    /* topbar height */
+  height: calc(100vh - 80px);
+  overflow-y: auto;
+}
