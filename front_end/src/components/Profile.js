@@ -14,11 +14,6 @@ function Profile() {
       const params = new URLSearchParams(window.location.search);
       const uid = params.get("uid");
 
-      if (!uid) {
-        navigate("/?error=invalid_user", { replace: true });
-        return;
-      }
-
       try {
         const res = await axios.get(`${API}/user/${uid}`);
         const data = res.data;
